@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process');
+const verifyToken = require('../auth');
 
-router.post('/', (req, res) => {
+router.post('/url',verifyToken ,(req, res) => {
   const url = req.body.url;
 
   if (!url || !url.startsWith('http')) {
