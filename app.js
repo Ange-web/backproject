@@ -3,12 +3,12 @@ const app = express();
 
 const cors = require("cors")
 
-const inscriptionroutes = require("../backProjet/function/inscription");
-const connexionroutes = require("../backProjet/function//connexion");
-const scanurl = require ("../backProjet/function/scan/scanurl");
-const scanport = require ("../backProjet/function/scan/scanport");
-const scanip = require ("../backProjet/function/scan/scanip");
-const iaollama= require("../backProjet/function/scan/iaollama")
+const inscriptionroutes = require("./function/inscription");
+const connexionroutes = require("./function/connexion");
+const scanurl = require ("./function/scan/scanurl");
+const scanport = require ("./function/scan/scanport");
+const scanip = require ("./function/scan/scanip");
+const iaollama= require("./function/scan/iaollama")
 const PORT = 3000;
 const {getPool}= require('./db');
 const { getalluser } = require('./function/get_user');
