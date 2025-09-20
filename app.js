@@ -19,11 +19,16 @@ const { getalluser } = require("./function/get_user");
 
 // Middleware
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: [
+    "http://localhost:5173",
+    "https://projet-personnel-rust.vercel.app"
+  ],
   methods: ["GET", "POST"],
   credentials: true
 }));
 app.use(express.json());
+
+
 
 // Routes principales
 app.get("/", getalluser);
