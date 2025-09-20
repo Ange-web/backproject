@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const verifyToken = require('../auth');
 const router = express.Router();
 
-router.get('/ip', verifyToken, async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     const response = await fetch('https://api.ipify.org?format=json');
     const data = await response.json();

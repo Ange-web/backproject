@@ -5,7 +5,7 @@ const verifyToken = require("../auth")
 
 const defaultPorts = [21, 22, 80, 443, 445, 3306, 3389, 8080];
 
-router.post('/port', verifyToken,(req, res) => {
+router.post('/', verifyToken,(req, res) => {
   const { type, ip, ports } = req.body;
 
   // Déterminer l'IP cible
