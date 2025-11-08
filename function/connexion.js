@@ -11,7 +11,7 @@ router.post("/login",async (req,res)=>{
         const pool= getPool();
         const jwtSecret = getJwtSecret();
 
-        const result = await pool.query("SELECT * FROM public.user WHERE email = $1",[email]);
+        const result = await pool.query("SELECT id, email, username, password, nom, prenom, avatar_url FROM public.user WHERE email = $1",[email]);
         if (result.rows.length === 0){
             return res.status(401).json({message:"Identifiant incorrect"});
         }

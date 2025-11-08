@@ -3,11 +3,13 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs");
 const { exiftool } = require("exiftool-vendored");
+const verifyToken = require("../auth");
+const path = require("path");
 
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-router.post("/read", upload.single("image"), async (req, res) => {
+router.post("/read", verifyToken, upload.single("image"), async (req, res) => {
   try {
     const metadata = await exiftool.read(req.file.path);
     res.json({ metadata, file: req.file.filename });
@@ -16,7 +18,7 @@ router.post("/read", upload.single("image"), async (req, res) => {
   }
 });
 
-router.post("/edit", async (req, res) => {
+router.post("/edit", verifyToken, async (req, res) => {
   const { file, tag, value } = req.body;
   const path = `uploads/${file}`;
 
@@ -28,7 +30,7 @@ router.post("/edit", async (req, res) => {
   }
 });
 
-router.post("/delete", async (req, res) => {
+router.post("/delete", verifyToken, async (req, res) => {
   const { file } = req.body;
   const path = `uploads/${file}`;
 
@@ -41,3 +43,29 @@ router.post("/delete", async (req, res) => {
 });
 
 module.exports = router;
+
+// Téléchargement sécurisé du fichier modifié
+router.get("/download/:file", verifyToken, async (req, res) => {
+  try {
+    const { file } = req.params;
+    // Validation stricte du nom de fichier (évite ../ et caractères spéciaux)
+    if (!/^[A-Za-z0-9_.-]{1,100}$/.test(file)) {
+      return res.status(400).json({ error: "Nom de fichier invalide" });
+    }
+
+    const uploadDir = path.resolve(process.cwd(), "uploads");
+    const fullPath = path.normalize(path.join(uploadDir, file));
+    if (!fullPath.startsWith(uploadDir)) {
+      return res.status(400).json({ error: "Chemin non autorisé" });
+    }
+    if (!fs.existsSync(fullPath)) {
+      return res.status(404).json({ error: "Fichier introuvable" });
+    }
+
+    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader("Content-Disposition", `attachment; filename="${file}"`);
+    return res.sendFile(fullPath);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
