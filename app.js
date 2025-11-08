@@ -13,6 +13,7 @@ const pool = getPool();
 // Importation des routes
 const inscriptionroutes = require("./function/inscription");
 const connexionroutes = require("./function/connexion");
+const profileRoutes = require("./function/profile");
 const scanurl = require("./function/scan/scanurl");
 const scanport = require("./function/scan/scanport");
 const scanip = require("./function/scan/scanip");
@@ -52,6 +53,7 @@ app.options(/.*/, cors(_corsOptions));
 app.get("/", getalluser);
 app.use("/new", inscriptionroutes);
 app.use("/user", connexionroutes);
+app.use("/profile", profileRoutes);
 
 // Routes de scan (bien séparées)
 app.use("/scan/url", scanurl);

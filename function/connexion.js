@@ -17,6 +17,10 @@ router.post("/login",async (req,res)=>{
         }
 
         const user = result.rows[0];
+        
+        console.log("User data from DB (full object):", JSON.stringify(user, null, 2));
+        console.log("User data from DB (nom, prenom):", { nom: user.nom, prenom: user.prenom });
+        console.log("User keys:", Object.keys(user));
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if(!passwordMatch){
@@ -35,16 +39,17 @@ router.post("/login",async (req,res)=>{
             {expiresIn: "1h"}
         );
         const defaultAvatar= "https://www.flaticon.com/svg/static/icons/svg/6809/6809608.svg";
-        res.json({token,
-            user:{
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                nom: user.nom,
-                prenom: user.prenom,
-                avatar_url: user.avatar_url || defaultAvatar,
-            },
-        });
+        const userResponse = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            nom: user.nom !== undefined ? user.nom : null,
+            prenom: user.prenom !== undefined ? user.prenom : null,
+            avatar_url: user.avatar_url || defaultAvatar,
+        };
+        console.log("User response before sending:", JSON.stringify(userResponse, null, 2));
+        console.log("Full response object:", JSON.stringify({token, user: userResponse}, null, 2));
+        res.json({token, user: userResponse});
     }catch(error){
         console.error("Erreur lors de la connexion :",error);
         res.status(500).json({message:"Erreur serveur"});
