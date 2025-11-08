@@ -40,6 +40,8 @@ router.post("/login",async (req,res)=>{
                 id: user.id,
                 username: user.username,
                 email: user.email,
+                nom: user.nom,
+                prenom: user.prenom,
                 avatar_url: user.avatar_url || defaultAvatar,
             },
         });
