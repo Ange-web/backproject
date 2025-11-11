@@ -1,12 +1,14 @@
 const express = require('express');
 const { exec } = require('child_process');
 const router = express.Router();
-const verifyToken = require("../auth")
+const verifyToken = require("../auth");
+const trackScan = require('../trackScan');
 
 const defaultPorts = [21, 22, 80, 443, 445, 3306, 3389, 8080];
 
 router.post('/', verifyToken,(req, res) => {
   const { type, ip, ports } = req.body;
+  const userId = req.user.id;
 
   // Déterminer l'IP cible
   let targetIp;
@@ -24,7 +26,7 @@ router.post('/', verifyToken,(req, res) => {
   // Commande Nmap (ne garde que les ports ouverts)
   const cmd = `nmap -p ${portList} ${targetIp} --open`;
 
-  exec(cmd, (err, stdout, stderr) => {
+  exec(cmd, async (err, stdout, stderr) => {
     if (err) {
       console.error('Erreur Nmap :', stderr);
       return res.status(500).json({ error: "Erreur pendant le scan. Assurez-vous que l'IP est accessible." });
@@ -36,6 +38,10 @@ router.post('/', verifyToken,(req, res) => {
       .filter(line => line.includes('/tcp') && line.includes('open'));
 
     const openPorts = lines.map(line => line.split('/')[0].trim());
+
+    // Enregistrer le scan dans la base de données
+    const target = `${targetIp}:${portList}`;
+    await trackScan(userId, 'port', target, openPorts.length);
 
     return res.json({
       scannedIp: targetIp,

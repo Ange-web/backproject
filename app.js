@@ -13,12 +13,12 @@ const pool = getPool();
 // Importation des routes
 const inscriptionroutes = require("./function/inscription");
 const connexionroutes = require("./function/connexion");
-const profileRoutes = require("./function/profile");
 const scanurl = require("./function/scan/scanurl");
 const scanport = require("./function/scan/scanport");
 const scanip = require("./function/scan/scanip");
 const iaollama = require("./function/scan/iaollama");
 const exifRoutes = require("./function/scan/exiftool");
+const statsRoutes = require("./function/stats");
 const { getalluser } = require("./function/get_user");
 
 // Middleware
@@ -53,7 +53,6 @@ app.options(/.*/, cors(_corsOptions));
 app.get("/", getalluser);
 app.use("/new", inscriptionroutes);
 app.use("/user", connexionroutes);
-app.use("/profile", profileRoutes);
 
 // Routes de scan (bien séparées)
 app.use("/scan/url", scanurl);
@@ -61,6 +60,9 @@ app.use("/scan/port", scanport);
 app.use("/scan/ip", scanip);
 app.use("/scan/ia", iaollama);
 app.use("/scan/exif", exifRoutes);
+
+// Routes de statistiques
+app.use("/stats", statsRoutes);
 
 /* ===================== ADD: Debug IP & Healthcheck ====================== */
 app.get("/debug/ip", (req, res) => {

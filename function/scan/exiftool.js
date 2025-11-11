@@ -4,6 +4,7 @@ const multer = require("multer");
 const fs = require("fs");
 const { exiftool } = require("exiftool-vendored");
 const verifyToken = require("../auth");
+const trackScan = require("../trackScan");
 const path = require("path");
 
 const router = express.Router();
@@ -11,7 +12,14 @@ const upload = multer({ dest: "uploads/" });
 
 router.post("/read", verifyToken, upload.single("image"), async (req, res) => {
   try {
+    const userId = req.user.id;
     const metadata = await exiftool.read(req.file.path);
+    
+    // Enregistrer le scan dans la base de données
+    const resultCount = Object.keys(metadata).length;
+    const target = req.file.originalname || req.file.filename;
+    await trackScan(userId, 'exif', target, resultCount);
+    
     res.json({ metadata, file: req.file.filename });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,6 +1,7 @@
 const express = require('express');
 const net = require('net');
 const verifyToken = require('../auth');
+const trackScan = require('../trackScan');
 const router = express.Router();
 
 function normalizeIp(raw) {
@@ -21,6 +22,8 @@ function normalizeIp(raw) {
 
 router.get('/', verifyToken, async (req, res) => {
   try {
+    const userId = req.user.id;
+    
     // Avec `app.set('trust proxy', true)` Express remplira req.ip correctement.
     // On lit différents headers pour compatibilité
     const xff = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.headers['cf-connecting-ip'];
@@ -33,6 +36,9 @@ router.get('/', verifyToken, async (req, res) => {
     }
 
     console.log('IP publique du client détectée:', ip);
+
+    // Enregistrer le scan dans la base de données
+    await trackScan(userId, 'ip', ip, 1);
 
     res.json({
       ip,
