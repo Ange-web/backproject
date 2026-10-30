@@ -1,2 +1,9 @@
 .env
-node_modules
+.env.*
+!.env.example
+node_modules/
+uploads/
+private-uploads/
+coverage/
+*.log
+private-uploads*/
