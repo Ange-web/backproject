@@ -1,30 +1,47 @@
 {
   "name": "backprojet",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js",
+    "migrate": "node scripts/migrate.js",
+    "purge": "node scripts/purge.js",
+    "reconcile": "node scripts/reconcile.js",
+    "demo": "node scripts/demo.js",
+    "test:exif": "node --test integration/exif.test.js",
+    "test:mongo": "node --test integration/mongo.test.js",
+    "test:e2e": "node --test integration/e2e.test.js",
+    "test:scanners": "node --test integration/scanners.test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
-    "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "exiftool-vendored": "^30.3.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^7.7.0",
     "multer": "^2.0.2",
-    "multer-storage-cloudinary": "^4.0.0",
-    "pg": "^8.15.6"
+    "pdfkit": "^0.20.2",
+    "pg": "^8.15.6",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "pg-mem": "^3.0.14",
+    "supertest": "^7.3.1"
+  },
+  "optionalDependencies": {
+    "exiftool-vendored.exe": "^13.30.0"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
